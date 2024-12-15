@@ -20,13 +20,13 @@ export class UsersController {
 
   @Post()
   public createUsers(
-    @Body('email') email: any,
-    @Headers() headers: any,
-    @Ip() ip: any,
+    @Body('name') name: string,
+    @Body('email') email: string,
+    @Body('password') password: string,
   ) {
-    console.log(ip);
+    console.log(name);
     console.log(email);
-    console.log(headers);
+    console.log(password);
     return 'You sent a POST request to users endpoint';
   }
 }
