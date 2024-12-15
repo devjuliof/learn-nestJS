@@ -2,22 +2,19 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
-  Put,
-  Delete,
   Param,
-  Query,
   Body,
   Headers,
   Ip,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 @Controller('users')
 export class UsersController {
   @Get('/:id')
-  public getUsers(@Param('id') id: any, @Query() query: any) {
+  public getUsers(@Param('id', ParseIntPipe) id: number) {
     console.log(id);
-    console.log(query);
+    console.log(typeof id);
     return 'You sent a GET request to users endpoint';
   }
 
