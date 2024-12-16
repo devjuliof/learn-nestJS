@@ -1,4 +1,5 @@
 import {
+  IsEmail,
   IsNotEmpty,
   IsString,
   Matches,
@@ -16,6 +17,7 @@ export class CreateUserDto {
   @IsString()
   @MinLength(3)
   @IsNotEmpty()
+  @IsEmail()
   email: string;
 
   @IsString()

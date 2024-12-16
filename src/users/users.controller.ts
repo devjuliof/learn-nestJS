@@ -7,26 +7,22 @@ import {
   Headers,
   Ip,
   ParseIntPipe,
+  ValidationPipe,
 } from '@nestjs/common';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { GetUsersParamDto } from './dtos/get-users-param.dto';
 
 @Controller('users')
 export class UsersController {
   @Get('/:id')
-  public getUsers(@Param('id', ParseIntPipe) id: number) {
-    console.log(id);
-    console.log(typeof id);
+  public getUsers(@Param() getUserParamDto: GetUsersParamDto) {
+    console.log(getUserParamDto);
     return 'You sent a GET request to users endpoint';
   }
 
   @Post()
-  public createUsers(
-    @Body('name') name: string,
-    @Body('email') email: string,
-    @Body('password') password: string,
-  ) {
-    console.log(name);
-    console.log(email);
-    console.log(password);
+  public createUsers(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
+    console.log(createUserDto);
     return 'You sent a POST request to users endpoint';
   }
 }
