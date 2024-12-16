@@ -16,4 +16,11 @@ export class UsersService {
       },
     ];
   }
+
+  public findOneById(id: number) {
+    return {
+      name: 'joana',
+      email: 'joanapaty@gmail.com',
+    };
+  }
 }
