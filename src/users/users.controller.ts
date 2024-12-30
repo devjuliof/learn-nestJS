@@ -17,10 +17,7 @@ import { UsersService } from './providers/user.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    // Inject Users Service
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get('/:id')
   public getUsers(@Param() getUserParamDto: GetUsersParamDto) {
