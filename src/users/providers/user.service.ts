@@ -9,7 +9,11 @@ export class UsersService {
     private readonly authService: AuthService,
   ) {}
 
-  public findAll(getUserParamDto: GetUsersParamDto) {
+  public findAll(
+    getUserParamDto: GetUsersParamDto,
+    limit: number,
+    page: number,
+  ) {
     const isAuth = this.authService.isAuth();
     console.log(isAuth);
 
