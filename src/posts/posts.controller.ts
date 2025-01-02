@@ -19,7 +19,7 @@ export class PostsController {
   }
 
   @Post()
-  public createPost(@Body(new ValidationPipe()) createPostDto: CreatePostDto) {
+  public createPost(@Body() createPostDto: CreatePostDto) {
     console.log(createPostDto);
     return 'post created';
   }
