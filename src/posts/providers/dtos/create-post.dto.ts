@@ -11,6 +11,7 @@ import {
   IsUrl,
   IsISO8601,
   ValidateNested,
+  MaxLength,
 } from 'class-validator';
 import { postStatus } from 'src/posts/enums/postStatus.enum';
 import { postType } from 'src/posts/enums/postType.enum';
@@ -24,6 +25,7 @@ export class CreatePostDto {
   })
   @IsString()
   @MinLength(4)
+  @MaxLength(96)
   @IsNotEmpty()
   title: string;
 
@@ -32,6 +34,7 @@ export class CreatePostDto {
     description: 'Possible values: "post", "page", "stories", "series"',
   })
   @IsEnum(postType)
+  @MaxLength(96)
   @IsNotEmpty()
   postType: postType;
 
@@ -41,6 +44,8 @@ export class CreatePostDto {
   })
   @IsString()
   @IsNotEmpty()
+  @MinLength(4)
+  @MaxLength(256)
   @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
     message:
       'A slug shoud be all small letters and uses only "-" and without spaces. For example "my-url"',
@@ -78,6 +83,7 @@ export class CreatePostDto {
   })
   @IsOptional()
   @IsUrl()
+  @MaxLength(1024)
   featuredImageUrl?: string;
 
   @ApiPropertyOptional({
