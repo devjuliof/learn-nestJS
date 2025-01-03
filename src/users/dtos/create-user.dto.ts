@@ -1,6 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MaxLength,
@@ -9,10 +10,16 @@ import {
 
 export class CreateUserDto {
   @IsString()
-  @IsNotEmpty()
   @MinLength(3)
   @MaxLength(96)
-  name: string;
+  @IsNotEmpty()
+  firstName: string;
+
+  @IsString()
+  @MinLength(3)
+  @MaxLength(96)
+  @IsOptional()
+  lastName: string;
 
   @IsString()
   @MinLength(3)
@@ -23,6 +30,7 @@ export class CreateUserDto {
 
   @IsString()
   @MinLength(8)
+  @MaxLength(96)
   @IsNotEmpty()
   @Matches(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={}|\[\]\\:";'<>?,./~`-]).{8,}$/,
