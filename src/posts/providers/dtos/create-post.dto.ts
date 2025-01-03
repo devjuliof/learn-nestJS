@@ -15,7 +15,7 @@ import {
 } from 'class-validator';
 import { postStatus } from 'src/posts/enums/postStatus.enum';
 import { postType } from 'src/posts/enums/postType.enum';
-import { CreatePostMetaOptionsDto } from './create-post-meta-options.dto';
+import { CreatePostMetaOptionsDto } from '../../../meta-options/dtos/create-post-meta-options.dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreatePostDto {
