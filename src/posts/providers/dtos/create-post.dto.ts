@@ -12,6 +12,7 @@ import {
   IsISO8601,
   ValidateNested,
   MaxLength,
+  IsInt,
 } from 'class-validator';
 import { postStatus } from 'src/posts/enums/postStatus.enum';
 import { postType } from 'src/posts/enums/postType.enum';
@@ -105,28 +106,29 @@ export class CreatePostDto {
   tags?: string[];
 
   @ApiPropertyOptional({
-    type: 'array',
     required: false,
     items: {
       type: 'object',
       properties: {
-        key: {
+        metaValue: {
           type: 'string',
-          description:
-            'The key can be any string identifier for your meta option',
-          example: 'sidebarEnabled',
-        },
-        value: {
-          type: 'any',
-          description: 'Any value that you want to save to the key',
-          example: true,
+          description: 'the metaValue is a JSON string',
+          example: '{"sidebarEnabled": true}',
         },
       },
     },
   })
   @IsOptional()
-  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreatePostMetaOptionsDto)
-  metaOptions?: CreatePostMetaOptionsDto[];
+  metaOptions?: CreatePostMetaOptionsDto | null;
+
+  @ApiProperty({
+    type: 'integer',
+    required: true,
+    example: 1,
+  })
+  @IsNotEmpty()
+  @IsInt()
+  authorId: number;
 }
