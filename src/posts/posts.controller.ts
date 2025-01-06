@@ -33,8 +33,8 @@ export class PostsController {
     description: 'A 200 response if the post is updated sucessfuly',
   })
   @Patch()
-  public updatePost(@Body() patchPostsDto: PatchPostsDto) {
-    console.log(patchPostsDto);
+  public updatePost(@Body() patchPostDto: PatchPostsDto) {
+    return this.postsServices.update(patchPostDto);
   }
 
   @Delete()
