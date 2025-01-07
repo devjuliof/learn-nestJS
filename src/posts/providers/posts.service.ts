@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, RequestTimeoutException } from '@nestjs/common';
 import { UsersService } from '../../users/providers/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -23,45 +23,123 @@ export class PostsService {
   ) {}
 
   public async create(createPostDto: CreatePostDto) {
-    const author = await this.usersService.findOneById(createPostDto.authorId);
+    let author = undefined;
 
-    const tags = await this.tagsService.findMultipleTags(createPostDto.tags);
+    try {
+      author = await this.usersService.findOneById(createPostDto.authorId);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
 
-    const post = this.postsRepository.create({
+    let tags = undefined;
+    try {
+      tags = await this.tagsService.findMultipleTags(createPostDto.tags);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
+
+    let post = this.postsRepository.create({
       ...createPostDto,
       author: author,
       tags: tags,
     });
 
-    return await this.postsRepository.save(post);
+    try {
+      post = await this.postsRepository.save(post);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
+
+    return post;
   }
 
   public async findAll(userId: string) {
-    const posts = await this.postsRepository.find({
-      relations: {
-        metaOptions: true,
-        //author: true,
-        //tags: true,
-      },
-    });
+    let posts = undefined;
+
+    try {
+      posts = await this.postsRepository.find({
+        relations: {
+          metaOptions: true,
+          //author: true,
+          //tags: true,
+        },
+      });
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
 
     return posts;
   }
 
   public async delete(id: number) {
-    await this.postsRepository.delete(id);
+    try {
+      await this.postsRepository.delete(id);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
 
     return { deleted: true, id };
   }
 
   public async update(patchPostsDto: PatchPostsDto) {
     // Find the tags
-    const tags = await this.tagsService.findMultipleTags(patchPostsDto.tags);
+    let tags = undefined;
+    try {
+      tags = await this.tagsService.findMultipleTags(patchPostsDto.tags);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
 
     // Find the post
-    const post = await this.postsRepository.findOneBy({
-      id: patchPostsDto.id,
-    });
+    let post = undefined;
+    try {
+      post = await this.postsRepository.findOneBy({
+        id: patchPostsDto.id,
+      });
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
+
+    if (!tags || tags.length !== patchPostsDto.tags.length) {
+      throw new BadRequestException(
+        'Please check your tag Ids and ensure they are correct',
+      );
+    }
 
     // Update the properties
     post.title = patchPostsDto.title ?? post.title;
@@ -75,7 +153,18 @@ export class PostsService {
 
     post.tags = tags;
 
+    try {
+      post = await this.postsRepository.save(post);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
+
     // Save the post and return
-    return await this.postsRepository.save(post);
+    return post;
   }
 }
