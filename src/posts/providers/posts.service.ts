@@ -7,6 +7,7 @@ import { CreatePostDto } from './dtos/create-post.dto';
 import { MetaOption } from 'src/meta-options/meta-option.entity';
 import { TagsService } from 'src/tags/providers/tags.service';
 import { PatchPostsDto } from './dtos/patch-post.dto';
+import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 
 @Injectable()
 export class PostsService {
@@ -120,6 +121,12 @@ export class PostsService {
       );
     }
 
+    if (!tags || tags.length !== patchPostsDto.tags.length) {
+      throw new BadRequestException(
+        'Please check your tag Ids and ensure they are correct',
+      );
+    }
+
     // Find the post
     let post = undefined;
     try {
@@ -135,10 +142,8 @@ export class PostsService {
       );
     }
 
-    if (!tags || tags.length !== patchPostsDto.tags.length) {
-      throw new BadRequestException(
-        'Please check your tag Ids and ensure they are correct',
-      );
+    if (!post) {
+      throw new BadRequestException('The post ID does not exist');
     }
 
     // Update the properties
