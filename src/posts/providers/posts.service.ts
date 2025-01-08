@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, RequestTimeoutException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { UsersService } from '../../users/providers/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -7,7 +11,9 @@ import { CreatePostDto } from './dtos/create-post.dto';
 import { MetaOption } from 'src/meta-options/meta-option.entity';
 import { TagsService } from 'src/tags/providers/tags.service';
 import { PatchPostsDto } from './dtos/patch-post.dto';
-import { CreateUserDto } from 'src/users/dtos/create-user.dto';
+import { GetPostsDto } from './dtos/get-posts.dto';
+import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
+import { Paginated } from 'src/common/pagination/interfaces/paginated.interface';
 
 @Injectable()
 export class PostsService {
@@ -21,6 +27,8 @@ export class PostsService {
     private readonly metaOptionsRepository: Repository<MetaOption>,
 
     private readonly tagsService: TagsService,
+
+    private readonly paginationProvider: PaginationProvider,
   ) {}
 
   public async create(createPostDto: CreatePostDto) {
@@ -69,17 +77,20 @@ export class PostsService {
     return post;
   }
 
-  public async findAll(userId: string) {
+  public async findAll(
+    postQuery: GetPostsDto,
+    userId: string,
+  ): Promise<Paginated<Post>> {
     let posts = undefined;
 
     try {
-      posts = await this.postsRepository.find({
-        relations: {
-          metaOptions: true,
-          //author: true,
-          //tags: true,
+      posts = await this.paginationProvider.paginateQuery(
+        {
+          limit: postQuery.limit,
+          page: postQuery.page,
         },
-      });
+        this.postsRepository,
+      );
     } catch (error) {
       throw new RequestTimeoutException(
         'Unable to process your request at the moment please try later',
