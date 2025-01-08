@@ -18,6 +18,8 @@ import { error } from 'console';
 import { UsersCreateManyProvider } from './users-create-many.provider';
 import { CreateUserDto } from './../dtos/create-user.dto';
 import { CreateManyUsersDto } from '../dtos/create-many-users.dto';
+import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
+import { GetUsersDto } from '../dtos/get-users.dto';
 
 /**
  * Class to connect to Users table and perform bussiness operations
@@ -29,6 +31,8 @@ export class UsersService {
     private usersRepository: Repository<User>,
 
     private readonly usersCreateManyProvider: UsersCreateManyProvider,
+
+    private readonly paginationProvider: PaginationProvider,
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
@@ -73,24 +77,30 @@ export class UsersService {
   /**
    * The method to get all the users from the database
    */
-  public findAll(
+  public async findAll(
     getUserParamDto: GetUsersParamDto,
-    limit: number,
-    page: number,
+    postQuery: GetUsersDto,
   ) {
-    throw new HttpException(
-      {
-        status: HttpStatus.MOVED_PERMANENTLY,
-        error: 'The API endpoint does not exist',
-        fileName: 'users.service.ts',
-        lineNumber: 88,
-      },
-      HttpStatus.MOVED_PERMANENTLY,
-      {
-        cause: new Error(),
-        description: 'Ocurred because the API endpoint was pemanently moved',
-      },
-    );
+    let users = undefined;
+
+    try {
+      users = await this.paginationProvider.paginateQuery(
+        {
+          limit: postQuery.limit,
+          page: postQuery.page,
+        },
+        this.usersRepository,
+      );
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
+
+    return users;
   }
 
   /**

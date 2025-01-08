@@ -18,6 +18,7 @@ import { PatchUserDto } from './dtos/patch-user.dto';
 import { UsersService } from './providers/user.service';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { CreateManyUsersDto } from './dtos/create-many-users.dto';
+import { GetUsersDto } from './dtos/get-users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -48,10 +49,9 @@ export class UsersController {
   })
   public getUsers(
     @Param() getUserParamDto: GetUsersParamDto,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query() postQuery: GetUsersDto,
   ) {
-    return this.usersService.findAll(getUserParamDto, limit, page);
+    return this.usersService.findAll(getUserParamDto, postQuery);
   }
 
   @Post()
@@ -68,7 +68,6 @@ export class UsersController {
 
   @Patch()
   public patchUser(@Body() patchUserDto: PatchUserDto) {
-    console.log(patchUserDto);
     return patchUserDto;
   }
 }
