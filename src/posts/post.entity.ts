@@ -83,6 +83,7 @@ export class Post {
 
   @ManyToOne(() => User, (user) => user.posts, {
     eager: true,
+    onDelete: 'CASCADE',
   })
   author: User;
 
