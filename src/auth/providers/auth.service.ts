@@ -10,12 +10,9 @@ export class AuthService {
      * Inject the signInProvider
      */
     private readonly signInProvider: SignInProvider,
-  ) {
-    console.log('AuthService instantiated');
-  }
+  ) {}
 
   public async signIn(signInDto: SignInDto) {
-    console.log(this.signInProvider);
     return await this.signInProvider.signIn(signInDto);
   }
 

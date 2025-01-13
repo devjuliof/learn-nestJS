@@ -20,10 +20,8 @@ export class SignInProvider {
   public async signIn(signInDto: SignInDto) {
     // Find the user using email ID
     // Throw an exception user not found
-    console.log('Finding user with email: ' + signInDto.email);
     const user = await this.usersService.findOneByEmail(signInDto.email);
 
-    console.log('User finded: ' + user);
     // Compare password to the hash
     let isEqual: boolean = false;
 
@@ -31,9 +29,6 @@ export class SignInProvider {
       isEqual = await this.hashingProvider.comparePassword(
         signInDto.password,
         user.password,
-      );
-      console.log(
-        'Compare if ' + signInDto.password + ' is equal to ' + user.password,
       );
     } catch (error) {
       throw new RequestTimeoutException(error, {
